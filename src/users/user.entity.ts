@@ -1,5 +1,6 @@
 import { hash } from "bcrypt";
-import { Entity, PrimaryGeneratedColumn,Column, BeforeInsert } from "typeorm";
+import { Rol } from "src/roles/rol.entity";
+import { Entity, PrimaryGeneratedColumn,Column, BeforeInsert, ManyToMany, JoinTable } from "typeorm";
 
 @Entity({name: 'users'})
 export class User{
@@ -34,6 +35,19 @@ export class User{
 
     @Column({type: 'datetime',default: () =>'CURRENT_TIMESTAMP'})
     updated_at: Date;
+
+    @JoinTable({
+        name:'user_has_roles',
+        joinColumn:{
+            name:'id_user'
+        },
+        inverseJoinColumn:{
+            name:'id_rol'
+        }
+    }
+    )//indicar que es la tabla principal
+    @ManyToMany(()=>Rol,(rol)=>rol.users)
+    roles: Rol[];
 
     @BeforeInsert()
     async hashPassword(){
